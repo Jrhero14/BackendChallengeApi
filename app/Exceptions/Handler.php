@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof AuthenticationException) {
+        if ($exception instanceof AuthenticationException && $request->getPathInfo() != '/admin') {
             return response()->json(['message' => 'you are not logged or jwt token invalid'], 401);
         }
 
