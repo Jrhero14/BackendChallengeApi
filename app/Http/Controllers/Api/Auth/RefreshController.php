@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
-class LogoutController extends Controller
+class RefreshController extends Controller
 {
     public function __construct()
     {
@@ -15,10 +14,11 @@ class LogoutController extends Controller
 
     public function __invoke()
     {
-        auth()->logout();
+        $token = auth()->refresh();
         return response()->json([
             'status' => true,
-            'message' => 'Successfully logged out'
-        ], 200);
+            'message' => 'Success Refresh Token',
+            'token' => $token,
+        ]);
     }
 }
