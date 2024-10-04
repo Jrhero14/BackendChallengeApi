@@ -38,11 +38,14 @@ Route::group([
     'prefix' => 'product'
 ], function ($router) {
     Route::get('/', [ProductController::class, 'index'])->name('get-products');
-    Route::get('/{id}', [ProductController::class, 'showByIdProduct'])->name('get-by-id-product');
+    Route::get('/get/{id}', [ProductController::class, 'showByIdProduct'])->name('get-by-id-product');
     Route::get('/user/{id}', [ProductController::class, 'showByIdUser'])->name('get-by-id-user');
+
+    Route::get('/search', [ProductController::class, 'searchProduct'])->name('search-product');
+
     Route::post('/create', [ProductController::class, 'create'])->name('create-product');
-    Route::put('/update/{id}', [ProductController::class, 'updateData'])->name('create-product');
-    Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('create-product');
+    Route::put('/update/{id}', [ProductController::class, 'updateData'])->name('update-product');
+    Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('delete-product');
 });
 
 Route::get('/ping', \App\Http\Controllers\Api\PingController::class)->name('ping');
