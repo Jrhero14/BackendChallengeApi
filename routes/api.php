@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RefreshController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\ValidTokenController;
 use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Review\ReviewController;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ Route::group([
     Route::post('/login', LoginController::class)->name('login');
     Route::post('/logout', LogoutController::class)->name('logout');
     Route::get('/refresh-token', RefreshController::class)->name('refresh-token');
+    Route::get('/valid-token', ValidTokenController::class)->name('valid-token');
 });
 
 Route::group([
