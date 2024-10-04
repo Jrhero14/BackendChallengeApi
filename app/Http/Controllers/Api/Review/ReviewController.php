@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Api\Review;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     public function index(Request $request)
     {
         $data = $this->withUserProduct($request);
@@ -133,7 +140,7 @@ class ReviewController extends Controller
             'user_id' => 'required|numeric',
             'product_id' => 'required|numeric',
             'body' => 'required',
-            'rating' => 'required|numeric'
+            'rating' => 'required|numeric|min:1|max:5',
         ]);
 
         if ($validData->fails()) {
@@ -141,6 +148,20 @@ class ReviewController extends Controller
                 'status' => false,
                 'message' => $validData->errors()
             ], 422);
+        }
+
+        if (!User::query()->where('id', '=', $request->get('user_id'))->exists()){
+            return response()->json([
+                'status' => false,
+                'message' => "User with id={$request->get('user_id')} not found"
+            ], 404);
+        }
+
+        if (!Product::query()->where('id', '=', $request->get('product_id'))->exists()){
+            return response()->json([
+                'status' => false,
+                'message' => "Product with id={$request->get('user_id')} not found"
+            ], 404);
         }
 
         $newReview = Review::create($validData->validate());
@@ -163,13 +184,12 @@ class ReviewController extends Controller
 
         $validData = Validator::make(request()->all(), [
             'body' => 'required',
-            'rating' => 'required|numeric'
+            'rating' => 'required|numeric|min:1|max:5'
         ]);
 
         if ($validData->fails()) {
             return response()->json([
                 'status' => false,
-                'test' => $data,
                 'message' => $validData->errors()
             ], 422);
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,9 +53,15 @@ class ProductController extends Controller
         }
 
         $imageName = time().'.'.$request->image->getClientOriginalExtension();
-        $request->image->storeAs('images', $imageName);
+        $request->image->storeAs('public', $imageName);
 
         $newProduct = new Product();
+        if (!User::query()->where('id', (int) $request->get('user_id'))->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => "User id={$request->get('user_id')} not found",
+            ], 500);
+        }
         $newProduct->user_id = (int) $request->get('user_id');
         $newProduct->nama = $request->get('nama');
         $newProduct->imageurl = $imageName;
@@ -82,10 +89,10 @@ class ProductController extends Controller
     {
         $getProduct = Product::query()->where('user_id', $id)->get();
 
-        if (!$getProduct){
+        if (count($getProduct) == 0){
             return response()->json([
                 'status' => false,
-                'message' => "Data by id user ={$id} not found",
+                'message' => "Data by id user={$id} not found",
                 'data' => []
             ], 404);
         }
@@ -155,7 +162,7 @@ class ProductController extends Controller
                 ], 422);
             }
             $imageName = time().'.'.$request->image->getClientOriginalExtension();
-            $request->image->storeAs('images', $imageName);
+            $request->image->storeAs('public', $imageName);
             $getProduct->imageurl = $imageName;
         }
         $getProduct->deskripsi = $request->get('deskripsi');
