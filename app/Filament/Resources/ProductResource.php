@@ -70,15 +70,19 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('imageurl'),
+                Tables\Columns\ImageColumn::make('imageurl')
+                    ->label('Gambar Produk'),
                 Tables\Columns\TextColumn::make('nama')
+                    ->sortable()
                     ->searchable()
                     ->label('Nama Produk'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Penjual')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('harga'),
+                Tables\Columns\TextColumn::make('harga')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('stok')
+                    ->sortable(),
             ])
             ->filters([
                 //

@@ -4,7 +4,8 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RefreshController;
 use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\Product\ProductController;
+use App\Http\Controllers\Api\Review\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,4 +49,19 @@ Route::group([
     Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('delete-product');
 });
 
-Route::get('/ping', \App\Http\Controllers\Api\PingController::class)->name('ping');
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'review'
+], function ($router) {
+
+    Route::get('/', [ReviewController::class, 'index'])->name('get-reviews');
+    Route::get('/get/{id}', [ReviewController::class, 'byIdReview'])->name('get-reviews-by-id-review');
+    Route::get('/user/{id}', [ReviewController::class, 'byUserId'])->name('get-reviews-by-userId');
+    Route::get('/product/{id}', [ReviewController::class, 'byProductId'])->name('get-reviews-by-productId');
+    Route::get('/search', [ReviewController::class, 'searchReview'])->name('search-review');
+
+    Route::post('/create', [ReviewController::class, 'createReview'])->name('search-review');
+    Route::put('/update/{id}', [ReviewController::class, 'updateReview'])->name('update-review');
+    Route::delete('/delete/{id}', [ReviewController::class, 'deleteReview'])->name('delete-review');
+
+});

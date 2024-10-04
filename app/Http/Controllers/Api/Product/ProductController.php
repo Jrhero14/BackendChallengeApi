@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     // Get All Product Data
     public function index(request $request)
     {
