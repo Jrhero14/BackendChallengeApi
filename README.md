@@ -1,64 +1,88 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Ecommerce Mini Warehouse
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ecommerce Mini Warehouse
+Ecommerce Mini Warehouse adalah sebuah aplikasi backend yang dirancang untuk mengelola data produk dan ulasan (review) di dalam sistem e-commerce skala kecil. Aplikasi ini menyediakan fitur CRUD (Create, Read, Update, Delete) untuk produk dan ulasan, yang memungkinkan administrator dan pengguna untuk berinteraksi dengan data secara efisien.
 
-## About Laravel
+### Fitur Utama:
+1. Manajemen Produk:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Fitur untuk mengelola daftar produk di warehouse e-commerce, termasuk menambah, melihat, memperbarui, dan menghapus produk.
+- Setiap produk memiliki informasi detail seperti nama, deskripsi, harga, dan stok yang tersedia.
+- Produk diorganisir dengan kategori tertentu untuk memudahkan pencarian.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+3. Manajemen Ulasan (Review):
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Pengguna dapat memberikan ulasan pada setiap produk yang tersedia, yang mencakup komentar dan rating.
+- Fitur CRUD untuk review memudahkan pengelolaan ulasan yang ditulis oleh pengguna.
+- Setiap ulasan akan terkait dengan produk tertentu, yang memungkinkan administrator untuk melihat feedback pelanggan terhadap produk tersebut.
 
-## Learning Laravel
+### Arsitektur dan Teknologi:
+- REST API: Aplikasi ini menggunakan arsitektur RESTful API, sehingga mudah diakses oleh berbagai klien seperti aplikasi web, mobile, atau integrasi dengan sistem lain.
+- Autentikasi dan Otorisasi: Aplikasi mendukung autentikasi menggunakan JWT Bearer Token untuk melindungi akses ke endpoint.
+- Database: Semua data produk dan review disimpan dalam database relasional menggunakan MySQL.
+- Framework: Backend dibangun dengan menggunakan framework Laravel 8.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Relasi Database
 
-## Laravel Sponsors
+<img src="https://i.ibb.co.com/djp4Qcw/Backend-Challange-ERD.png">
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Relasi database utama yang dibuat adalah entity Products dan Reviews, sedangkan entity Users sebagai tambahan dan termasuk entity
+bawaan dari Laravel juga terkait dengan fitur autentikasi. Hubungan relasi setiap entitas dijelaskan sebagai berikut:
+1. Product <-> Review : One To Many (Has Many)
+- Setiap product memiliki lebih dari satu review.
 
-### Premium Partners
+2. User <-> Products : One To Many (Has Many)
+- Setiap user bisa memiliki (menjual) lebih dari 1 product.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+3. User <-> Review : One To Many (Has Many)
+- Setiap user bisa memiliki komentar lebih dari satu untuk setiap product yang direview.
 
-## Contributing
+## Screenshot Aplikasi
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Login Admin
 
-## Code of Conduct
+<img src="https://i.ibb.co.com/LknC7JJ/Screenshot-2024-10-05-165429.png" alt="Screenshot-2024-10-05-165429" border="0">
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- CRUD Products
 
-## Security Vulnerabilities
+<img src="https://i.ibb.co.com/qnkwnbM/Screenshot-2024-10-05-165358.png" alt="Screenshot-2024-10-05-165358" border="0">
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- CRUD Review
 
-## License
+<img src="https://i.ibb.co.com/pfgc0x2/Screenshot-2024-10-05-165415.png" alt="Screenshot-2024-10-05-165415" border="0">
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- User Management
+
+<img src="https://i.ibb.co.com/sRzMh9d/Screenshot-2024-10-05-165422.png" alt="Screenshot-2024-10-05-165422" border="0">
+
+- Testing API using Postman
+
+<img src="https://i.ibb.co.com/nzzmndZ/Screenshot-2024-10-05-165927.png" alt="Screenshot-2024-10-05-165927" border="0">
+
+## Tech Stack and Dependency
+
+### Main Framework
+
+- Laravel 8
+
+### Database and ORM
+
+- MySQL
+- Laravel Eloquent ORM
+
+### Dependency
+
+- Filament 2.x
+- tymon/jwt-auth
+
+### NOTE:
+- Jika Anda ingin mencoba aplikasi ini di lokal enviroment disarankan untuk melakukan restore database default yang ada di project ini.
+file .sql backup terdapat di folder "database/backup/backendchallange.sql" dan lakukan restore melalui database client di lokal enviroment
+kalian masing-masing.
+
+## Contact Me
+
+- [My Github](https://github.com/Jrhero14)
+- [Jeremi.herodian.a43@gmail.com](Jeremi.herodian.a43@gmail.com)
+
