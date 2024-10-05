@@ -23,6 +23,10 @@ class ProductController extends Controller
         $this->middleware('auth:api');
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(request $request)
     {
         $withUser = $request->get('withuser');
@@ -34,6 +38,12 @@ class ProductController extends Controller
         ], 200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function create(Request $request)
     {
         // Check validate data request
@@ -49,31 +59,22 @@ class ProductController extends Controller
             throw new FailedResponse($validateData->errors(), 422);
         }
 
-        // Upload Image Process
-        $imageName = $this->productService->uploadImage($request);
-        if (!$imageName) {
-            throw new FailedResponse("Failed upload image, problem in server", 500);
-        }
-
         // Store Product in Service
-        $isCreated = $this->productService->createNewProduct(
-            $validateData->validate(),
-            $imageName,
-        );
-
-        // Check is Product failed create
-        if (!$isCreated) {
-            throw new FailedResponse("Failed to create new product, problem in server", 500);
-        }
+        $productCreated = $this->productService->createNewProduct($request, $validateData->validate());
 
         // Response Success
         return response()->json([
             'status' => true,
             'message' => 'Success save product data',
-            'data' => $isCreated
+            'data' => $productCreated
         ], 201);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     */
     public function showByIdUser($id)
     {
         if (!is_numeric($id)){
@@ -86,6 +87,11 @@ class ProductController extends Controller
         ], 200);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     */
     public function showByIdProduct($id)
     {
         if (!is_numeric($id)){
@@ -98,6 +104,13 @@ class ProductController extends Controller
         ], 200);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function updateData(Request $request, $id)
     {
         // Validation id is number
@@ -116,6 +129,14 @@ class ProductController extends Controller
             throw new FailedResponse($validateData->errors(), 422);
         }
 
+        // Check Image field are valid if exists in request
+        if($request->exists('image')){
+            $validImage = Validator::make(request()->all(), ['image' => 'required|image|mimes:jpeg,png,jpg']);
+            if ($validImage->fails()) {
+                throw new FailedResponse($validImage->errors(), 422);
+            }
+        }
+
         // Update Process in service container
         $getProduct = $this->productService->updateDataProduct($request, $id, $validateData->validate());
 
@@ -127,85 +148,53 @@ class ProductController extends Controller
         ], 200);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     */
     public function destroy($id)
     {
-        $getProduct = Product::query()->where('id', $id)->first();
-        if (!$getProduct){
-            return response()->json([
-                'status' => false,
-                'message' => "Data by id={$id} not found",
-            ], 404);
+        // Validation id is number
+        if (!is_numeric($id)){
+            throw new FailedResponse("id params must Integer\number", 400);
         }
 
-        $getProduct->delete();
+        // Process Delete and Check is success or not
+        if (!$this->productService->deleteProduct($id)){
+            throw new FailedResponse("Failed to delete product data", 500);
+        }
+
+        // Success Response
         return response()->json([
             'status' => true,
             'message' => 'Success delete product data',
         ], 200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     */
     public function searchProduct(Request $request)
     {
+        // Validation data request
         $validData = Validator::make(request()->all(), [
             'start_harga' => 'numeric',
             'end_harga' => 'numeric',
             'start_stok' => 'numeric',
             'end_stok' => 'numeric',
         ]);
-
         if ($validData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validData->errors()
-            ], 422);
+            throw new FailedResponse($validData->errors(), 422);
         }
 
-        $getNamaParam = $request->get('nama');
-        $getDeskripsiParam = $request->get('deskripsi');
-        $getStartHargaParam = $request->get('start_harga');
-        $getEndHargaParam = $request->get('end_harga');
-        $getStartStokParam = $request->get('start_stok');
-        $getEndStokParam = $request->get('end_stok');
-
-        $getProduct = Product::query();
-        if ($getNamaParam){
-            $getProduct = $getProduct->where('nama', 'like', '%' . $getNamaParam . '%');
-        }
-
-        if ($getDeskripsiParam){
-            $getProduct = $getProduct->where('deskripsi', 'like', '%' . $getDeskripsiParam . '%');
-        }
-
-        if ($getStartHargaParam){
-            $getProduct = $getProduct->where('harga', '>=', (int) $getStartHargaParam);
-        }
-
-        if ($getEndHargaParam){
-            $getProduct = $getProduct->where('harga', '<=', (int) $getEndHargaParam);
-        }
-
-        if ($getStartStokParam){
-            $getProduct = $getProduct->where('stok', '>=', (int) $getStartStokParam);
-        }
-
-        if ($getEndStokParam){
-            $getProduct = $getProduct->where('stok', '<=', (int) $getEndStokParam);
-        }
-
-        $getProduct = $getProduct->get();
-
-        if (count($getProduct) == 0){
-            return response()->json([
-                'status' => false,
-                'message' => 'Product not found',
-                'data' => []
-            ], 404);
-        }
-
+        // Success Response
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',
-            'data' => $getProduct
+            'data' => $this->productService->filterProduct($request)
         ], 200);
     }
 }

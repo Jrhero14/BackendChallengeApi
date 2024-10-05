@@ -41,15 +41,21 @@ class ProductServiceImplementation implements ProductService
     /**
      * Create New Product Service
      * @param array $validator
-     * @param string $imageName
      * @return true
      * @throws FailedResponse
      */
-    public function createNewProduct(array $validator, string $imageName)
+    public function createNewProduct(Request $request, array $validator)
     {
+        // Check if user exists
         $isUserExists = $this->userRepository->geById($validator["user_id"]);
         if (is_null($isUserExists)) {
             throw new FailedResponse("User by id = {$validator["user_id"]} not found", 404);
+        }
+
+        // Upload Image Process
+        $imageName = $this->uploadImage($request);
+        if (!$imageName) {
+            throw new FailedResponse("Failed upload image, problem in server", 500);
         }
 
         $validator["imageurl"] = $imageName;
@@ -58,8 +64,7 @@ class ProductServiceImplementation implements ProductService
         $validator["stok"] = (int) $validator["stok"];
 
         try {
-            $this->productRepository->store($validator);
-            return true;
+            return $this->productRepository->store($validator);
         }catch (\Exception $e){
             throw new FailedResponse($e->getMessage(), 500);
         }
@@ -109,18 +114,60 @@ class ProductServiceImplementation implements ProductService
             throw new FailedResponse("Data by id={$id} not found", 404);
         }
 
-        // Check Image field are valid if exists in request
-        if($request->exists('image')){
-            $validImage = Validator::make(request()->all(), ['image' => 'required|image|mimes:jpeg,png,jpg']);
-            if ($validImage->fails()) {
-                throw new FailedResponse($validImage->errors(), 422);
-            }
-            $getProduct[0]->imageurl = $this->uploadImage($request);
+        // Add imageurl field into array
+        if ($request->exists('image')){
+            $validator["imageurl"] = $this->uploadImage($request);
+        }else{
+            $validator["imageurl"] = $getProduct[0]->imageurl;
         }
 
-        // Add imageurl field into array
-        $validator["imageurl"] = $getProduct[0]->imageurl;
-
         return $this->productRepository->update($id, $validator);
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     * @throws FailedResponse
+     */
+    public function deleteProduct(int $id)
+    {
+        // Check if Product by id exists
+        $getProduct = $this->productRepository->getByIdProduct($id);
+        if (count($getProduct) == 0){
+            throw new FailedResponse("Data by id={$id} not found", 404);
+        }
+        // Delete Process
+        return $this->productRepository->delete($id);
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     * @throws FailedResponse
+     */
+    public function filterProduct(Request $request)
+    {
+        $getNamaParam = $request->get('nama');
+        $getDeskripsiParam = $request->get('deskripsi');
+        $getStartHargaParam = $request->get('start_harga');
+        $getEndHargaParam = $request->get('end_harga');
+        $getStartStokParam = $request->get('start_stok');
+        $getEndStokParam = $request->get('end_stok');
+
+        $products = $this->productRepository->filter([
+            // [nama_field, operation, value]
+            ['nama', 'like', $getNamaParam],
+            ['deskripsi', 'like', $getDeskripsiParam],
+            ['harga', '>=', $getStartHargaParam],
+            ['harga', '<=', $getEndHargaParam],
+            ['stok','>=', $getStartStokParam],
+            ['stok', '<=', $getEndStokParam]
+        ]);
+
+        if (count($products) == 0){
+            throw new FailedResponse("Products not found", 404);
+        }
+
+        return $products;
     }
 }

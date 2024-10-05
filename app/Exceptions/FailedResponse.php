@@ -25,7 +25,7 @@ class FailedResponse extends Exception
     {
         return response()->json([
             'status' => false,
-            'message' => $this->getMessage()
+            'message' => json_decode($this->getMessage()) ? json_decode($this->getMessage()) : $this->getMessage(),
         ], $this->getCode());
     }
 }
