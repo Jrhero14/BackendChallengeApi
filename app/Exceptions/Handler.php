@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
@@ -45,6 +46,13 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof AuthenticationException && $request->getPathInfo() != '/admin') {
             return response()->json(['message' => 'you are not logged or jwt token invalid'], 401);
+        }
+
+        if ($exception instanceof QueryException){
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage()],
+                500);
         }
 
         return parent::render($request, $exception);

@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Api\Product;
 
+use App\Exceptions\Debug;
+use App\Exceptions\FailedResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Repositories\Product\ProductRepository;
+use App\Http\Services\Product\ProductService;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,22 +14,19 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function __construct()
+    private $productRepository;
+    private $productService;
+    public function __construct(ProductRepository $productRepository, ProductService $productService)
     {
+        $this->productRepository = $productRepository;
+        $this->productService = $productService;
         $this->middleware('auth:api');
     }
 
-    // Get All Product Data
     public function index(request $request)
     {
         $withUser = $request->get('withuser');
-        if(filter_var($withUser, FILTER_VALIDATE_BOOLEAN)){
-            $products = Product::with('user')->get();
-        }
-        else{
-            $products = Product::all();
-        }
-
+        $products = $this->productRepository->getAll(filter_var($withUser, FILTER_VALIDATE_BOOLEAN));
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',
@@ -33,9 +34,9 @@ class ProductController extends Controller
         ], 200);
     }
 
-    // Create New Product
     public function create(Request $request)
     {
+        // Check validate data request
         $validateData = Validator::make(request()->all(), [
             'user_id' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg',
@@ -44,139 +45,81 @@ class ProductController extends Controller
             'harga' => 'required|numeric',
             'stok' => 'required|numeric',
         ]);
-
         if ($validateData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validateData->errors()
-            ], 422);
+            throw new FailedResponse($validateData->errors(), 422);
         }
 
-        $imageName = time().'.'.$request->image->getClientOriginalExtension();
-        $request->image->storeAs('public', $imageName);
-
-        $newProduct = new Product();
-        if (!User::query()->where('id', (int) $request->get('user_id'))->exists()) {
-            return response()->json([
-                'status' => false,
-                'message' => "User id={$request->get('user_id')} not found",
-            ], 500);
-        }
-        $newProduct->user_id = (int) $request->get('user_id');
-        $newProduct->nama = $request->get('nama');
-        $newProduct->imageurl = $imageName;
-        $newProduct->deskripsi = $request->get('deskripsi');
-        $newProduct->harga = (int) $request->get('harga');
-        $newProduct->stok = (int) $request->get('stok');
-        try {
-            $newProduct->save();
-        }catch (\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
+        // Upload Image Process
+        $imageName = $this->productService->uploadImage($request);
+        if (!$imageName) {
+            throw new FailedResponse("Failed upload image, problem in server", 500);
         }
 
+        // Store Product in Service
+        $isCreated = $this->productService->createNewProduct(
+            $validateData->validate(),
+            $imageName,
+        );
+
+        // Check is Product failed create
+        if (!$isCreated) {
+            throw new FailedResponse("Failed to create new product, problem in server", 500);
+        }
+
+        // Response Success
         return response()->json([
             'status' => true,
             'message' => 'Success save product data',
-            'data' => $newProduct
+            'data' => $isCreated
         ], 201);
     }
 
-    // Get Product by ID User
     public function showByIdUser($id)
     {
-        $getProduct = Product::query()->where('user_id', $id)->get();
-
-        if (count($getProduct) == 0){
-            return response()->json([
-                'status' => false,
-                'message' => "Data by id user={$id} not found",
-                'data' => []
-            ], 404);
+        if (!is_numeric($id)){
+            throw new FailedResponse("id params must Integer\number", 400);
         }
-
         return response()->json([
             'status' => true,
-            'test' => $id,
             'message' => 'Success get product data',
-            'data' => $getProduct
+            'data' => $this->productService->getProductByUserId($id)
         ], 200);
     }
 
-    // Get Product By ID Product
     public function showByIdProduct($id)
     {
-        $getProduct = Product::where('id', '=', $id)->first();
-
-        if (!$getProduct){
-            return response()->json([
-                'status' => false,
-                'message' => "Data by id={$id} not found",
-                'data' => []
-            ], 404);
+        if (!is_numeric($id)){
+            throw new FailedResponse("id params must Integer\number", 400);
         }
-
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',
-            'data' => $getProduct
+            'data' => $this->productService->getProductByProductId($id)
         ], 200);
     }
 
     public function updateData(Request $request, $id)
     {
-        $getProduct = Product::query()->where('id', $id)->first();
-        if (!$getProduct){
-            return response()->json([
-                'status' => false,
-                'message' => "Data Product by id={$id} not found",
-                'data' => []
-            ], 404);
+        // Validation id is number
+        if (!is_numeric($id)){
+            throw new FailedResponse("id params must Integer\number", 400);
         }
 
+        // Validation field request
         $validateData = Validator::make(request()->all(), [
             'nama' => 'required',
             'deskripsi' => 'required',
             'harga' => 'required|numeric',
             'stok' => 'required|numeric',
         ]);
-
         if ($validateData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validateData->errors()
-            ], 422);
+            throw new FailedResponse($validateData->errors(), 422);
         }
 
-        $getProduct->nama = $request->get('nama');
-        if($request->exists('image')){
-            $validImage = Validator::make(request()->all(), [
-                'image' => 'required|image|mimes:jpeg,png,jpg'
-            ]);
-            if ($validImage->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'messsage' => $validImage->errors()
-                ], 422);
-            }
-            $imageName = time().'.'.$request->image->getClientOriginalExtension();
-            $request->image->storeAs('public', $imageName);
-            $getProduct->imageurl = $imageName;
-        }
-        $getProduct->deskripsi = $request->get('deskripsi');
-        $getProduct->harga = (int) $request->get('harga');
-        $getProduct->stok = (int) $request->get('stok');
-        try {
-            $getProduct->save();
-        }catch (\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        // Update Process in service container
+        $getProduct = $this->productService->updateDataProduct($request, $id, $validateData->validate());
 
+        // Response update product is successfully
         return response()->json([
             'status' => true,
             'message' => 'Success update product data',
