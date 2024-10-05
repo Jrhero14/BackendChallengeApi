@@ -60,6 +60,10 @@ bawaan dari Laravel juga terkait dengan fitur autentikasi. Hubungan relasi setia
 
 <img src="https://i.ibb.co.com/nzzmndZ/Screenshot-2024-10-05-165927.png" alt="Screenshot-2024-10-05-165927" border="0">
 
+## Detail API Documentation
+
+[Documentation](https://documenter.getpostman.com/view/34986320/2sAXxMesfm)
+
 ## Tech Stack and Dependency
 
 ### Main Framework
