@@ -10,7 +10,7 @@ Ecommerce Mini Warehouse adalah sebuah aplikasi backend yang dirancang untuk men
 - Setiap produk memiliki informasi detail seperti nama, deskripsi, harga, dan stok yang tersedia.
 - Produk diorganisir dengan kategori tertentu untuk memudahkan pencarian.
 
-3. Manajemen Ulasan (Review):
+2. Manajemen Ulasan (Review):
 
 - Pengguna dapat memberikan ulasan pada setiap produk yang tersedia, yang mencakup komentar dan rating.
 - Fitur CRUD untuk review memudahkan pengelolaan ulasan yang ditulis oleh pengguna.
@@ -42,19 +42,19 @@ bawaan dari Laravel juga terkait dengan fitur autentikasi. Hubungan relasi setia
 
 - Login Admin
 
-<img src="https://i.ibb.co.com/LknC7JJ/Screenshot-2024-10-05-165429.png" alt="Screenshot-2024-10-05-165429" border="0">
+<img src="https://i.ibb.co.com/LknC7JJ/Screenshot-2024-10-05-165429.png">
 
 - CRUD Products
 
-<img src="https://i.ibb.co.com/qnkwnbM/Screenshot-2024-10-05-165358.png" alt="Screenshot-2024-10-05-165358" border="0">
+<img src="https://i.ibb.co.com/qnkwnbM/Screenshot-2024-10-05-165358.png">
 
 - CRUD Review
 
-<img src="https://i.ibb.co.com/pfgc0x2/Screenshot-2024-10-05-165415.png" alt="Screenshot-2024-10-05-165415" border="0">
+<img src="https://i.ibb.co.com/pfgc0x2/Screenshot-2024-10-05-165415.png">
 
 - User Management
 
-<img src="https://i.ibb.co.com/sRzMh9d/Screenshot-2024-10-05-165422.png" alt="Screenshot-2024-10-05-165422" border="0">
+<img src="https://i.ibb.co.com/sRzMh9d/Screenshot-2024-10-05-165422.png">
 
 - Testing API using Postman
 
