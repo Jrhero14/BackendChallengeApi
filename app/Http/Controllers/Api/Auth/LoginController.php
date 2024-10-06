@@ -2,12 +2,29 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Exceptions\FailedResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Services\Auth\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
+    private $authService;
+
+    /**
+     * @param AuthService $authService
+     */
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws FailedResponse
+     */
     public function __invoke(Request $request)
     {
         // Validate Data
@@ -16,20 +33,11 @@ class LoginController extends Controller
             'password' => 'required|string|min:8',
         ]);
         if ($validateData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validateData->errors()
-            ], 422);
+            throw new FailedResponse($validateData->errors(), 422);
         }
 
-        // Check if Credential not authorization
-        $credentials = $request->only('email', 'password');
-        if (!$token = auth()->guard('api')->attempt($credentials)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email atau password salah'
-            ], 401);
-        }
+        // Login process in service
+        $token = $this->authService->login($request);
 
         // Success Login
         return response()->json([

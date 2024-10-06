@@ -21,6 +21,12 @@ class ProductServiceImplementation implements ProductService
         $this->productRepository = $productRepository;
     }
 
+    public function getAllProducts($withUser)
+    {
+        $isWithUser = filter_var($withUser, FILTER_VALIDATE_BOOLEAN);
+        return $this->productRepository->getAll($isWithUser);
+    }
+
     /**
      * Untuk melakukan Upload gambar product ke server
      * @param Request $request
@@ -89,9 +95,10 @@ class ProductServiceImplementation implements ProductService
      * @return mixed
      * @throws FailedResponse
      */
-    public function getProductByProductId(int $id)
+    public function getProductByProductId(int $id, $withReviews)
     {
-        $getProduct = $this->productRepository->getByIdProduct($id);
+        $withReviews = filter_var($withReviews, FILTER_VALIDATE_BOOLEAN);
+        $getProduct = $this->productRepository->getByIdProduct($id, $withReviews);
         if (count($getProduct) == 0){
             throw new FailedResponse("Data by id={$id} not found", 404);
         }

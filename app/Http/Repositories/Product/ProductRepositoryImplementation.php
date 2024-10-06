@@ -27,7 +27,6 @@ class ProductRepositoryImplementation implements ProductRepository
         if ($withUser) {
             return $this->productModel->with('user')->get();
         }
-
         return $this->productModel->all();
     }
 
@@ -53,8 +52,11 @@ class ProductRepositoryImplementation implements ProductRepository
      * @param int $id
      * @return Builder[]|Collection
      */
-    public function getByIdProduct(int $id)
+    public function getByIdProduct(int $id, bool $withReviews = false)
     {
+        if ($withReviews) {
+            return $this->productModel::query()->with('reviews.user')->where('id', '=', $id)->get();
+        }
         return $this->productModel::query()->where('id', '=', $id)->get();
     }
 

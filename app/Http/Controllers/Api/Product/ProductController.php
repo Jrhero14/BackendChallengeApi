@@ -14,11 +14,9 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    private $productRepository;
     private $productService;
-    public function __construct(ProductRepository $productRepository, ProductService $productService)
+    public function __construct(ProductService $productService)
     {
-        $this->productRepository = $productRepository;
         $this->productService = $productService;
         $this->middleware('auth:api');
     }
@@ -30,7 +28,7 @@ class ProductController extends Controller
     public function index(request $request)
     {
         $withUser = $request->get('withuser');
-        $products = $this->productRepository->getAll(filter_var($withUser, FILTER_VALIDATE_BOOLEAN));
+        $products = $this->productService->getAllProducts($withUser);
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',
@@ -77,9 +75,12 @@ class ProductController extends Controller
      */
     public function showByIdUser($id)
     {
+        // Check if id is numeric
         if (!is_numeric($id)){
             throw new FailedResponse("id params must Integer\number", 400);
         }
+
+        // Response Success
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',
@@ -92,15 +93,21 @@ class ProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws FailedResponse
      */
-    public function showByIdProduct($id)
+    public function showByIdProduct(Request $request, $id)
     {
+        // Check if id is numeric
         if (!is_numeric($id)){
             throw new FailedResponse("id params must Integer\number", 400);
         }
+
+        // Get option params
+        $isWithReviews = $request->get('withReviews');
+
+        // Response Success
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',
-            'data' => $this->productService->getProductByProductId($id)
+            'data' => $this->productService->getProductByProductId($id, $isWithReviews)
         ], 200);
     }
 
@@ -140,7 +147,7 @@ class ProductController extends Controller
         // Update Process in service container
         $getProduct = $this->productService->updateDataProduct($request, $id, $validateData->validate());
 
-        // Response update product is successfully
+        // Response Success
         return response()->json([
             'status' => true,
             'message' => 'Success update product data',
@@ -190,7 +197,7 @@ class ProductController extends Controller
             throw new FailedResponse($validData->errors(), 422);
         }
 
-        // Success Response
+        // Response Success
         return response()->json([
             'status' => true,
             'message' => 'Success get product data',

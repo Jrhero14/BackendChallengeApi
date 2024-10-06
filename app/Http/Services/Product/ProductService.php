@@ -8,9 +8,10 @@ use Illuminate\Validation\Validator;
 interface ProductService
 {
     public function uploadImage(Request $request);
+    public function getAllProducts($withUser);
     public function createNewProduct(Request $request, array $validator);
     public function getProductByUserId(int $id);
-    public function getProductByProductId(int $id);
+    public function getProductByProductId(int $id, $withReviews);
     public function updateDataProduct(Request $request, int $id, array $validator);
     public function deleteProduct(int $id);
     public function filterProduct(Request $request);
