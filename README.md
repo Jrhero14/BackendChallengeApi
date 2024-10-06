@@ -64,7 +64,7 @@ Install with composer
   cd BackendChallengeApi
 ```
 
-- Import sql file
+- Import sql file ( pastikan database "backendchallange" sudah ada )
 ```bash
   mysql -u username -p backendchallange < database/backup/mysql_backup.sql
 ```
@@ -73,6 +73,12 @@ Atau Anda bisa melakukan import manual melalui database client seperti phpmyadmi
 - Install dependency with Composer
 ```bash
   composer install
+```
+
+- Configuration
+```bash
+  php artisan config:cache
+  php artisan key:generate
 ```
 
 - Run Project
