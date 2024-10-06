@@ -40,11 +40,13 @@ bawaan dari Laravel juga terkait dengan fitur autentikasi. Hubungan relasi setia
 
 ## Environment Variables
 
-To run this project, you will need to add the following database environment variables to your .env file
+To run this project, you will need to add the following environment variables to your .env file
+
+`APP_URL = http://127.0.0.1`
 
 `DB_CONNECTION = mysql`
 
-`DB_HOST = 127.0.0.1/localhost`
+`DB_HOST = 127.0.0.1`
 
 `DB_PORT = 3306`
 
@@ -53,6 +55,8 @@ To run this project, you will need to add the following database environment var
 `DB_USERNAME = root`
 
 `DB_PASSWORD = `
+
+`JWT_SECRET = random_screet_key_jwt`
 
 ## Installation
 
@@ -75,10 +79,15 @@ Atau Anda bisa melakukan import manual melalui database client seperti phpmyadmi
   composer install
 ```
 
+- Copy and create .env.example to .env
+```bash
+  cp .env.example .env
+```
+
 - Configuration
 ```bash
-  php artisan config:cache
   php artisan key:generate
+  php artisan config:cache
 ```
 
 - Run Project
