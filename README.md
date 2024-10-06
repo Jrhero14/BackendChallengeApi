@@ -8,7 +8,7 @@ Ecommerce Mini Warehouse adalah sebuah aplikasi backend yang dirancang untuk men
 
 - Fitur untuk mengelola daftar produk di warehouse e-commerce, termasuk menambah, melihat, memperbarui, dan menghapus produk.
 - Setiap produk memiliki informasi detail seperti nama, deskripsi, harga, dan stok yang tersedia.
-- Produk diorganisir dengan kategori tertentu untuk memudahkan pencarian.
+- Fitur pencarian produk di admin panel memudahkan administrator untuk mengelola data produk.
 
 2. Manajemen Ulasan (Review):
 
