@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Repositories\Product\ProductRepository;
 use App\Http\Repositories\Product\ProductRepositoryImplementation;
 use App\Http\Repositories\Review\ReviewRepository;
+use App\Http\Repositories\Review\ReviewRepositoryImplementation;
 use App\Http\Repositories\User\UserRepository;
 use App\Http\Repositories\User\UserRepositoryImplementation;
 use App\Http\Services\Auth\AuthService;
@@ -28,11 +29,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ProductRepository::class,ProductRepositoryImplementation::class);
         $this->app->singleton(UserRepository::class,UserRepositoryImplementation::class);
-        $this->app->singleton(ReviewRepository::class,ReviewServiceImplementation::class);
+        $this->app->singleton(ReviewRepository::class,ReviewRepositoryImplementation::class);
 
-        $this->app->singleton(ProductService::class,ProductServiceImplementation::class);
-        $this->app->singleton(ReviewService::class,ReviewServiceImplementation::class);
-        $this->app->singleton(AuthService::class,AuthServiceImplementation::class);
+        $this->app->bind(ProductService::class,ProductServiceImplementation::class);
+        $this->app->bind(ReviewService::class,ReviewServiceImplementation::class);
+        $this->app->bind(AuthService::class,AuthServiceImplementation::class);
     }
 
     /**

@@ -16,17 +16,19 @@
 
 
 -- Dumping database structure for backendchallange
+DROP DATABASE IF EXISTS `backendchallange`;
 CREATE DATABASE IF NOT EXISTS `backendchallange` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `backendchallange`;
 
 -- Dumping structure for table backendchallange.failed_jobs
+DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE IF NOT EXISTS `failed_jobs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
@@ -35,14 +37,15 @@ CREATE TABLE IF NOT EXISTS `failed_jobs` (
 -- Dumping data for table backendchallange.failed_jobs: ~0 rows (approximately)
 
 -- Dumping structure for table backendchallange.migrations
+DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE IF NOT EXISTS `migrations` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table backendchallange.migrations: ~0 rows (approximately)
+-- Dumping data for table backendchallange.migrations: ~6 rows (approximately)
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(39, '2014_10_12_000000_create_users_table', 1),
 	(40, '2014_10_12_100000_create_password_resets_table', 1),
@@ -52,9 +55,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(44, '2024_10_04_063217_create_reviews_table', 1);
 
 -- Dumping structure for table backendchallange.password_resets
+DROP TABLE IF EXISTS `password_resets`;
 CREATE TABLE IF NOT EXISTS `password_resets` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -62,13 +66,14 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
 -- Dumping data for table backendchallange.password_resets: ~0 rows (approximately)
 
 -- Dumping structure for table backendchallange.personal_access_tokens
+DROP TABLE IF EXISTS `personal_access_tokens`;
 CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tokenable_id` bigint unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -80,13 +85,14 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
 -- Dumping data for table backendchallange.personal_access_tokens: ~0 rows (approximately)
 
 -- Dumping structure for table backendchallange.products
+DROP TABLE IF EXISTS `products`;
 CREATE TABLE IF NOT EXISTS `products` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint unsigned NOT NULL,
-  `imageurl` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `imageurl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `harga` int NOT NULL,
   `stok` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -96,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `products_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table backendchallange.products: ~0 rows (approximately)
+-- Dumping data for table backendchallange.products: ~8 rows (approximately)
 INSERT INTO `products` (`id`, `user_id`, `imageurl`, `nama`, `slug`, `deskripsi`, `harga`, `stok`, `created_at`, `updated_at`) VALUES
 	(1, 1, '8HExSLtNhbw4TETXExCKjp9HKmHL3R-metaMF9jYWNoZTk4LnBuZw==-.png', 'INDOMIE MI GORENG RASA RENDANG 91GR', 'indomie-mi-goreng-rasa-rendang-91gr', '<h3>SELAMAT DATANG DI Toko SUKAMURAH</h3><p>KAMI menjual semua BARANG yang terjamin 100 % =<br>* keaslian barangnya<br>* higienis<br>* aman dari kadaluwarsa ( karena QC kita SUPER ketat )<br>* harga yang murah</p><h3>INDOMIE MI GORENG RASA RENDANG 91GR</h3><p>Indomie Mie Goreng Rasa Rendang, Indomie Goreng Rendang terinspirasi dari cita rasa khas kuliner lokal Indonesia asal Padang. Aroma bumbu rendang yang khas berpadu bawang goreng renyah hadirkan rasa mie goreng yang unik dan menggoda. Indomie Goreng Rendang terbuat dari tepung terigu berkualitas dengan paduan rempah-rempah pilihan terbaik, serta diproses dengan higienis menggunakan standar internasional dan teknologi berkualitas tinggi. Juga dilengkapi tambahan fortifikasi mineral dan vitamin A, B1, B6, B12, Niasin, Asam Folat &amp; Mineral Zat Besi yang dibutuhkan tubuh.</p><p><strong>BPOM RI MD 231509011002</strong></p>', 3000, 100, '2024-10-04 02:09:56', '2024-10-04 02:09:56'),
 	(2, 2, 'hz5VVPaKB45Kn3xYQFsso02kbQ5HCk-metaOGUwYzVkMGUtMmI5Ny00MGYwLWIxMTktYjZkMWRhZTVmNzc4LmpwZw==-.jpg', '1 KARTON FILMA MINYAK GORENG 2L ISI 6PCS', '1-karton-filma-minyak-goreng-2l-isi-6pcs', '<h3>SELAMAT DATANG DI Toko SUKAMURAHCOM</h3><p>KAMI Menjual semua bahan makanan dan minuman yang terjamin 100 % =<br>* keaslian barang krn kita adalah partner dr pabrikan<br>* higienis<br>* aman dari kadaluarsa ( karena QC kita super ketat )<br>* harga yang murah</p><p>1 KARTON FILMA MINYAK GORENG 2L ISI 6PCS</p><p>Filma minyak goreng pouch merupakan minyak goreng non kolesterol yang terbuat dari buah sawit segar pilihan, diproduksi dengan sistem pemurnian terintegrasi dan pengawasan mutu ekstra ketat, sehingga menghasilkan minyak goreng yang jernih bernutrisi. Filma minyak goreng mengandung asam lemak tak jenuh yang dapat membantu menjaga kadar kolesterol, Omega 6 &amp; Omega 9 yang merupakan asam lemak esensial yang diperlukan oleh tubuh, Vitamin D yang baik untuk membantu pembentukan dan pemeliharaan tulang, serta Vitamin E sebagai anti oksidan alami. Warna kuning keemasannya berasal dari kandungan Beta Karoten alami (Pro Vitamin A).</p><p><strong>BPOM RI MD 208113182013</strong></p>', 215000, 50, '2024-10-04 02:17:15', '2024-10-04 02:17:15'),
@@ -108,12 +114,13 @@ INSERT INTO `products` (`id`, `user_id`, `imageurl`, `nama`, `slug`, `deskripsi`
 	(8, 3, '6sGCTHioIrgLVXOjUDaxz9deZ4s8sl-metaMV9BMTAxNjAwMDAwODFfMjAyNDA1MjExNTUxMTk4NzlfYmFzZS5qcGc=-.jpg', 'Roma Sari Gandum Biskuit Sandwich Susu & Cokelat 108 g', 'roma-sari-gandum-biskuit-sandwich-susu-cokelat-108-g', '<p><strong>Deskripsi</strong></p><ul><li>Biskuit sandwich gandum</li><li>Rasa susu dan cokelat</li><li>Mengandung fiber, antioksidan, beberapa vitamin, selenium, zinc, dan magnesium</li><li>Kemasannya praktis dan mudah dibawa ke mana saja</li><li>Tersedia dalam kemasan 108 g</li></ul><p><strong>Roma Sari Gandum Sandwich Biskuit Susu &amp; Cokelat 108 g</strong> adalah makanan camilan berupa biskuit yang terbuat dari gandum dan dipenuhi susu bergizi. Biskuit gandum ini dapat memberi banyak manfaat bagi siapa saja yang mengonsumsinya karena biji gandumnya mengandung fiber, antioksidan, beberapa vitamin, selenium, zinc, dan magnesium yang dapat mendukung kebutuhan gizi Anda. Disempurnakan juga dengan tambahan rasa cokelat dan susu bergizi yang menambah kenikmatan dari biskuit gandum itu sendiri. Roma Sari Gandum Sandwich Biskuit Susu &amp; Cokelat 108 g cocok untuk dijadikan menu camilan diet.</p>', 10000, 50, '2024-10-04 03:38:36', '2024-10-04 03:38:36');
 
 -- Dumping structure for table backendchallange.reviews
+DROP TABLE IF EXISTS `reviews`;
 CREATE TABLE IF NOT EXISTS `reviews` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint unsigned NOT NULL,
   `product_id` bigint unsigned NOT NULL,
   `rating` int NOT NULL,
-  `body` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `body` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -123,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table backendchallange.reviews: ~0 rows (approximately)
+-- Dumping data for table backendchallange.reviews: ~8 rows (approximately)
 INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `rating`, `body`, `created_at`, `updated_at`) VALUES
 	(1, 3, 5, 5, 'Beras super kualitasnya baik', '2024-10-04 03:54:51', '2024-10-04 03:54:51'),
 	(2, 4, 1, 5, 'Barang bagus, harga murah terbaik', '2024-10-04 03:57:00', '2024-10-04 03:57:00'),
@@ -135,25 +142,26 @@ INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `rating`, `body`, `created
 	(8, 2, 1, 4, 'Humm barangnya bagus tapi packing kurang baik', '2024-10-04 04:54:04', '2024-10-04 04:54:04');
 
 -- Dumping structure for table backendchallange.users
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table backendchallange.users: ~0 rows (approximately)
+-- Dumping data for table backendchallange.users: ~4 rows (approximately)
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-	(1, 'Jeremi Herodian Abednigo', 'admin@email.com', NULL, '$2y$10$2wbF1yOPnVhu8VjIS07VvOSOQ3kjREHTv4w14UtcS8Z5EbCC9VlCG', NULL, '2024-10-04 01:56:48', '2024-10-04 01:56:48'),
-	(2, 'Budiman', 'budiman@email.com', NULL, 'budi12345', NULL, '2024-10-04 02:15:51', '2024-10-04 02:15:51'),
-	(3, 'Harianto', 'Harianto@email.com', NULL, 'harianto12345', NULL, '2024-10-04 02:24:08', '2024-10-04 02:24:08'),
-	(4, 'Udiana', 'udinana@email.com', NULL, 'udiana12345', NULL, '2024-10-04 03:29:35', '2024-10-04 03:29:35');
+	(1, 'Jeremi Herodian Abednigo', 'admin@jeremi.com', '2024-10-06 12:58:50', '$2y$10$2wbF1yOPnVhu8VjIS07VvOSOQ3kjREHTv4w14UtcS8Z5EbCC9VlCG', NULL, '2024-10-04 01:56:48', '2024-10-04 01:56:48'),
+	(2, 'Budiman', 'budiman@email.com', NULL, '$2y$10$Ff3eNP63ERrN1vXHiVvj9OBmadz4rnt/boeEVMnMfd6eB5X78Skd6', NULL, '2024-10-04 02:15:51', '2024-10-06 06:26:09'),
+	(3, 'Harianto', 'Harianto@email.com', NULL, '$2y$10$FrV4nSMSOBB8iQmF6bFo6uQ9odYxUT33SCg4fjcodJyk9hv0Dvszm', NULL, '2024-10-04 02:24:08', '2024-10-06 06:17:33'),
+	(4, 'Udiana', 'udinana@email.com', NULL, '$2y$10$cmVhCWLs.4jLwh9CUfXhw.W2ZFLcRJOPMsnXQsfFI5rMjE4/az4KC', NULL, '2024-10-04 03:29:35', '2024-10-06 06:17:43');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

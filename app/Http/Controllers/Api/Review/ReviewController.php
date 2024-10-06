@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Api\Review;
 
+use App\Exceptions\Debug;
+use App\Exceptions\FailedResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Services\Review\ReviewService;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
@@ -12,53 +15,57 @@ use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
 {
-    public function __construct()
+    private $reviewService;
+    public function __construct(ReviewService  $reviewService)
     {
         $this->middleware('auth:api');
+        $this->reviewService = $reviewService;
     }
 
     public function index(Request $request)
     {
-        $data = $this->withUserProduct($request);
-        $data = $data->get();
-
+        $withUser = $request->get('withUser');
+        $withProduct = $request->get('withProduct');
         return response()->json([
             'status' => true,
-            'message' => 'Success get all reviews',
-            'data' => $data
+            'message' => 'Success get data reviews',
+            'data' => $this->reviewService->getAllReviews($withUser, $withProduct),
         ], 200);
     }
 
     public function byIdReview(Request $request, $id){
-        $data = $this->withUserProduct($request);
-        $data = $data->where('id', $id)->get();
-
-        if (count($data) == 0){
-            return response()->json([
-                'status' => false,
-                'message' => "Review id = {$id} not found",
-                'data' => []
-            ], 404);
+        // Validate id is numeric
+        if (!is_numeric($id)){
+            throw new FailedResponse("Review id must be numeric", 400);
         }
 
+        // Get Optional Params
+        $withUser = $request->get('withUser');
+        $withProduct = $request->get('withProduct');
+
+        // Process get data from service
+        $data = $this->reviewService->getReview($id, $withUser, $withProduct);
+
+        // Success Response
         return response()->json([
             'status' => true,
-            'message' => 'Success get review',
+            'message' => 'Success get review data',
             'data' => $data
         ], 200);
     }
 
     public function byUserId(Request $request, $id){
-        $data = $this->withUserProduct($request);
-        $data = $data->where('user_id', $id)->get();
-
-        if (count($data) == 0){
-            return response()->json([
-                'status' => false,
-                'message' => "Review by User id = {$id} not found",
-                'data' => []
-            ], 404);
+        // Validate id is numeric
+        if (!is_numeric($id)){
+            throw new FailedResponse("Review id must be numeric", 400);
         }
+
+        // Get Optional Params
+        $withUser = $request->get('withUser');
+        $withProduct = $request->get('withProduct');
+
+        // Process get data from service
+        $data = $this->reviewService->getReviewByUserId($id, $withUser, $withProduct);
 
         return response()->json([
             'status' => true,
@@ -68,16 +75,17 @@ class ReviewController extends Controller
     }
 
     public function byProductId(Request $request, $id){
-        $data = $this->withUserProduct($request);
-        $data = $data->where('product_id', $id)->get();
-
-        if (count($data) == 0){
-            return response()->json([
-                'status' => false,
-                'message' => "Review by Product id = {$id} not found",
-                'data' => []
-            ], 404);
+        // Validate id is numeric
+        if (!is_numeric($id)){
+            throw new FailedResponse("Review id must be numeric", 400);
         }
+
+        // Get Optional Params
+        $withUser = $request->get('withUser');
+        $withProduct = $request->get('withProduct');
+
+        // Process get data from service
+        $data = $this->reviewService->getReviewByProductId($id, $withUser, $withProduct);
 
         return response()->json([
             'status' => true,
@@ -86,136 +94,86 @@ class ReviewController extends Controller
         ], 200);
     }
 
-    public function withUserProduct(Request $request): Builder
-    {
-        $withUser = $request->get('withUser');
-        $withProduct = $request->get('withProduct');
-
-        $reviews = Review::query();
-
-        if (filter_var($withUser, FILTER_VALIDATE_BOOLEAN)) {
-            $reviews = $reviews->with('user');
-        }
-
-        if (filter_var($withProduct, FILTER_VALIDATE_BOOLEAN)) {
-            $reviews = $reviews->with('product');
-        }
-        return $reviews;
-    }
-
     public function searchReview(Request $request){
+        // Validate request field
         $validData = Validator::make(request()->all(), [
             'rating' => 'numeric',
             'body' => 'string',
         ]);
-
         if ($validData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validData->errors()
-            ], 422);
+            throw new FailedResponse($validData->errors(), 422);
         }
 
-        $getRatingParam = $request->get('rating');
-        $getBodyParam = $request->get('body');
-        $review = Review::query();
-        if ($getRatingParam){
-            $review = $review->where('rating', (int) $getRatingParam);
-        }
+        $validData = $validData->validate();
 
-        if ($getBodyParam){
-            $review = $review->where('body', 'like', '%'.$getBodyParam.'%');
-        }
-        $review = $review->get();
+        // Get Optional Params
+        $withUser = $request->get('withUser');
+        $withProduct = $request->get('withProduct');
 
+        // Success Response
         return response()->json([
             'status' => true,
             'message' => 'Success search review',
-            'data' => $review
+            'data' => $this->reviewService->searchReviews($validData, $withUser, $withProduct)
         ]);
     }
 
     public function createReview(Request $request){
+        // Validate request field
         $validData = Validator::make(request()->all(), [
             'user_id' => 'required|numeric',
             'product_id' => 'required|numeric',
             'body' => 'required',
             'rating' => 'required|numeric|min:1|max:5',
         ]);
-
         if ($validData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validData->errors()
-            ], 422);
+            throw new FailedResponse($validData->errors(), 422);
         }
 
-        if (!User::query()->where('id', '=', $request->get('user_id'))->exists()){
-            return response()->json([
-                'status' => false,
-                'message' => "User with id={$request->get('user_id')} not found"
-            ], 404);
-        }
+        $validData = $validData->validate();
 
-        if (!Product::query()->where('id', '=', $request->get('product_id'))->exists()){
-            return response()->json([
-                'status' => false,
-                'message' => "Product with id={$request->get('user_id')} not found"
-            ], 404);
-        }
-
-        $newReview = Review::create($validData->validate());
+        // Success Response
         return response()->json([
             'status' => true,
             'message' => 'Success create review',
-            'data' => $newReview
+            'data' => $this->reviewService->createReview($validData)
         ], 201);
     }
 
     public function updateReview(Request $request, $id){
-        $data = Review::query()->where('id', $id)->first();
-        if (is_null($data)) {
-            return response()->json([
-                'status' => false,
-                'message' => "Review id {$id} not found",
-                'data' => []
-            ], 404);
+        // Validate id is numeric
+        if (!is_numeric($id)){
+            throw new FailedResponse("Review id must be numeric", 400);
         }
 
+        // Validate field request
         $validData = Validator::make(request()->all(), [
             'body' => 'required',
             'rating' => 'required|numeric|min:1|max:5'
         ]);
-
         if ($validData->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validData->errors()
-            ], 422);
+            throw new FailedResponse($validData->errors(), 422);
         }
 
-        $data->rating = (int) $request->get('rating');
-        $data->body = $request->get('body');
-        $data->save();
+        $validData = $validData->validate();
 
         return response()->json([
             'status' => true,
             'message' => 'Success update review',
-            'data' => $data
+            'data' => $this->reviewService->updateReview($id, $validData)
         ], 200);
     }
 
     public function deleteReview(Request $request, $id){
-        $data = Review::query()->where('id', $id)->first();
-        if (is_null($data)) {
-            return response()->json([
-                'status' => false,
-                'message' => "Review id {$id} not found",
-                'data' => []
-            ], 404);
+        // Validate id is numeric
+        if (!is_numeric($id)){
+            throw new FailedResponse("Review id must be numeric", 400);
         }
-        $data->delete();
 
+        // Delete Process in Service
+        $this->reviewService->deleteReview($id);
+
+        // Success Response
         return response()->json([
             'status' => true,
             'message' => 'Success delete review'
