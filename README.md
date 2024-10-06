@@ -38,10 +38,58 @@ bawaan dari Laravel juga terkait dengan fitur autentikasi. Hubungan relasi setia
 3. User <-> Review : One To Many (Has Many)
 - Setiap user bisa memiliki komentar lebih dari satu untuk setiap product yang direview.
 
+## Environment Variables
+
+To run this project, you will need to add the following database environment variables to your .env file
+
+`DB_CONNECTION = mysql`
+
+`DB_HOST = 127.0.0.1/localhost`
+
+`DB_PORT = 3306`
+
+`DB_DATABASE = backendchallange`
+
+`DB_USERNAME = root`
+
+`DB_PASSWORD = `
+
+## Installation
+
+Install with composer
+
+- Clone Project
+```bash
+  git clone https://github.com/Jrhero14/BackendChallengeApi
+  cd BackendChallengeApi
+```
+
+- Import sql file
+```bash
+  mysql -u username -p backendchallange < database/backup/mysql_backup.sql
+```
+Atau Anda bisa melakukan import manual melalui database client seperti phpmyadmin, tableplus, dll
+
+- Install dependency with Composer
+```bash
+  composer install
+```
+
+- Run Project
+```bash
+  php artisan serve
+```
+
+
 ## Screenshot Aplikasi
 
 - Login Admin
-
+```bash
+  Url: /admin
+  Default User Admin:
+  - email: admin@jeremi.com
+  - password: mimin123
+```
 <img src="https://i.ibb.co.com/LknC7JJ/Screenshot-2024-10-05-165429.png">
 
 - CRUD Products
@@ -62,7 +110,7 @@ bawaan dari Laravel juga terkait dengan fitur autentikasi. Hubungan relasi setia
 
 ## Detail API Documentation
 
-[Documentation](https://documenter.getpostman.com/view/34986320/2sAXxMesfm)
+[Postman Documentation](https://documenter.getpostman.com/view/34986320/2sAXxMesfm)
 
 ## Tech Stack and Dependency
 
